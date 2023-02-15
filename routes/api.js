@@ -1,5 +1,5 @@
 'use strict';
-/*
+
 // Import Module
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
@@ -30,7 +30,7 @@ mongoose
   .catch(function(error) {
     console.log(error);
   });
-*/
+
 module.exports = function (app) {
   
   app.route('/api/threads/:board')
