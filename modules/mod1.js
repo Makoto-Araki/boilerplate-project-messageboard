@@ -1,15 +1,26 @@
 // Import Module
 const mongoose = require('mongoose');
-//const bcrypt = require('bcrypt');
 
 // Schema
-//const threadSchema = new mongoose.Schema({
-  //text: { type: String },
-  //like: { type: String }
-//});
+const replySchema = new mongoose.Schema({
+  text: { type: String },
+  created_on: { type: Date, default: Date.now },
+  delete_password: { type: String },
+  reported: { type: Boolean },
+});
+
+// Schema
+const threadSchema = new mongoose.Schema({
+  text: { type: String },
+  created_on: { type: Date, default: Date.now },
+  bumped_on: { type: Date, default: Date.now },
+  delete_password: { type: String },
+  reported: { type: Boolean },
+  replies: { type: [replySchema] },
+});
 
 // Model is made from schema
-//const Likes = mongoose.model('Likes', likeSchema);
+const Thread = mongoose.model('Thread', threadSchema);
 
 /*
 // Get Stock likes from MongoDB Collection
