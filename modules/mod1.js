@@ -3,24 +3,25 @@ const mongoose = require('mongoose');
 
 // Schema
 const replySchema = new mongoose.Schema({
-  text: { type: String },
-  created_on: { type: Date, default: Date.now },
+  text:            { type: String },
+  created_on:      { type: Date, default: Date.now },
   delete_password: { type: String },
-  reported: { type: Boolean },
+  reported:        { type: Boolean, default: false },
 });
 
 // Schema
 const boardSchema = new mongoose.Schema({
-  board: { type: String },
-  text: { type: String },
-  created_on: { type: Date, default: Date.now },
-  bumped_on: { type: Date, default: Date.now },
+  board:           { type: String },
+  text:            { type: String },
+  created_on:      { type: Date, default: Date.now },
+  bumped_on:       { type: Date, default: Date.now },
   delete_password: { type: String },
-  reported: { type: Boolean },
-  replies: { type: [replySchema] },
+  reported:        { type: Boolean, default: false },
+  replies:         { type: [replySchema] },
 });
 
 // Model is made from schema
+const Reply = mongoose.model('Reply', replySchema);
 const Board = mongoose.model('Board', boardSchema);
 
 // New Thread
@@ -37,6 +38,32 @@ const newThread = function(req) {
         reject(err);
       }
     });
+  });
+}
+
+// New Reply
+const newReply = function(req) {
+  return new Promise(function(resolve, reject) {
+
+    // Reply Instance
+    let entry = new Reply();
+    entry.text = req.body.text;
+    entry.delete_password = req.body.delete_password;
+
+    // Options
+    let opt1 = { _id: req.body.thread_id };
+    let opt2 = { $set: { bumped_on: Date.now() }, $push: { replies: entry } };
+    let opt3 = { new: true, upsert: false };
+    
+    Board
+      .findOneAndUpdate(opt1, opt2, opt3)
+      .exec(function(err, doc) {
+        if (!err) {
+          resolve(doc);
+        } else {
+          reject(err);
+        }
+      });
   });
 }
 
@@ -141,6 +168,7 @@ const clearLikes = function() {
 
 // Exports
 exports.newThread = newThread;
+exports.newReply = newReply;
 exports.getThread = getThread;
 //exports.getStockLikes = getStockLikes;
 //exports.setStockLikes = setStockLikes;

@@ -36,6 +36,11 @@ const newThread = async function(req) {
   return await mod1.newThread(req);
 }
 
+// New Reply
+const newReply = async function(req) {
+  return await mod1.newReply(req);
+}
+
 // Get Thread
 const getThread = async function(req) {
   return await mod1.getThread(req);
@@ -45,42 +50,30 @@ module.exports = function (app) {
   
   app.route('/api/threads/:board')
     .get(function(req, res) {
-      getThread(req)
-        .then(function(result) {
-          res.send(result);
-        });
+      //
     })
     .post(function(req, res) {
       newThread(req)
         .then(function(result) {
-          console.log(result);
+          res.json(result);
         });
     })
     .put(function(req, res) {
       // { board: 'AAA', thread_id: 'AAA-id' }
-      console.log('PUT - /api/threads/:board');
-      console.dir(req.body);
     })
     .delete(function(req, res) {
       // { board: 'AAA', thread_id: 'AAA-id', delete_password: 'AAA-pass' }
-      console.log('DELETE - /api/threads/:board');
-      console.dir(req.body);
     });
   
   app.route('/api/replies/:board')
     .get(function(req, res) {
-      console.log('GET - /api/replies/:board');
-      console.dir(req.body);
+      //
     })
     .post(function(req, res) {
-      /*{
-        board: 'AAA',
-        thread_id: 'AAA-id',
-        text: 'AAA text',
-        delete_password: 'AAA-pass'
-      }*/
-      console.log('POST - /api/replies/:board');
-      console.dir(req.body);
+      newReply(req)
+        .then(function(result) {
+          res.json(result);
+        })
     })
     .put(function(req, res) {
       // { board: 'AAA', thread_id: 'AAA-id', reply_id: 'AAA-01-id' }
