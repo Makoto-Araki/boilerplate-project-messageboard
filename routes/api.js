@@ -31,17 +31,30 @@ mongoose
     console.log(error);
   });
 
+// New Thread
+const newThread = async function(req) {
+  return await mod1.newThread(req);
+}
+
+// Get Thread
+const getThread = async function(req) {
+  return await mod1.getThread(req);
+}
+
 module.exports = function (app) {
   
   app.route('/api/threads/:board')
     .get(function(req, res) {
-      console.log('GET - /api/threads/:board');
-      console.dir(req.body);
+      getThread(req)
+        .then(function(result) {
+          res.send(result);
+        });
     })
     .post(function(req, res) {
-      // { board: 'AAA', text: 'AAA text', delete_password: 'AAA-pass' }
-      console.log('POST - /api/threads/:board');
-      console.dir(req.body); 
+      newThread(req)
+        .then(function(result) {
+          console.log(result);
+        });
     })
     .put(function(req, res) {
       // { board: 'AAA', thread_id: 'AAA-id' }

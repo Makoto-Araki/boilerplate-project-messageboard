@@ -10,7 +10,8 @@ const replySchema = new mongoose.Schema({
 });
 
 // Schema
-const threadSchema = new mongoose.Schema({
+const boardSchema = new mongoose.Schema({
+  board: { type: String },
   text: { type: String },
   created_on: { type: Date, default: Date.now },
   bumped_on: { type: Date, default: Date.now },
@@ -20,7 +21,40 @@ const threadSchema = new mongoose.Schema({
 });
 
 // Model is made from schema
-const Thread = mongoose.model('Thread', threadSchema);
+const Board = mongoose.model('Board', boardSchema);
+
+// New Thread
+const newThread = function(req) {
+  return new Promise(function(resolve, reject) {
+    let entry = new Board();
+    entry.board = req.body.board;
+    entry.text = req.body.text;
+    entry.delete_password = req.body.delete_password;
+    entry.save(function(err, doc) {
+      if (!err) {
+        resolve(doc);
+      } else {
+        reject(err);
+      }
+    });
+  });
+}
+
+// Get Thread
+const getThread = function(req) {
+  return new Promise(function(resolve, reject) {
+    Board
+      .find({ board: req.params.board })
+      .select({ board: 0, deleted_password: 0, __v: 0 })
+      .exec(function(err, doc) {
+        if (!err) {
+          resolve(doc);
+        } else {
+          reject(err);
+        }
+      });
+  });
+}
 
 /*
 // Get Stock likes from MongoDB Collection
@@ -106,6 +140,8 @@ const clearLikes = function() {
 */
 
 // Exports
+exports.newThread = newThread;
+exports.getThread = getThread;
 //exports.getStockLikes = getStockLikes;
 //exports.setStockLikes = setStockLikes;
 //exports.chkAddrStockPairs = chkAddrStockPairs;
