@@ -27,10 +27,13 @@ const Board = mongoose.model('Board', boardSchema);
 // New Thread
 const newThread = function(req) {
   return new Promise(function(resolve, reject) {
+    
+    // Board Instance
     let entry = new Board();
     entry.board = req.body.board;
     entry.text = req.body.text;
     entry.delete_password = req.body.delete_password;
+    
     entry.save(function(err, doc) {
       if (!err) {
         resolve(doc);
@@ -70,12 +73,32 @@ const newReply = function(req) {
 // Get Thread
 const getThread = function(req) {
   return new Promise(function(resolve, reject) {
+    
+    // Options
+    let opt1 = { board: req.params.board };
+    let opt2 = { board: 0, delete_password: 0, reported: 0,  __v: 0 };
+    let opt3 = { bumped_on: -1 }
+    
     Board
-      .find({ board: req.params.board })
-      .select({ board: 0, deleted_password: 0, __v: 0 })
+      .find(opt1)
+      .select(opt2)
+      .sort(opt3)
+      .limit(10)
       .exec(function(err, doc) {
         if (!err) {
-          resolve(doc);
+          let result = [];
+          let object = {};
+          for (let i = 0; i < doc.length; i++) {
+            object = {};
+            object._id = doc[i]._id;
+            object.text = doc[i].text;
+            object.created_on = doc[i].created_on;
+            object.bumped_on = doc[i].bumped_on;
+            object.replies = doc[i].replies;
+            object.replycount = doc[i].replies.length;
+            result.push(object);
+          }
+          resolve(result);
         } else {
           reject(err);
         }

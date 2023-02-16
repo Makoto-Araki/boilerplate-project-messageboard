@@ -50,7 +50,10 @@ module.exports = function (app) {
   
   app.route('/api/threads/:board')
     .get(function(req, res) {
-      //
+      getThread(req)
+        .then(function(result) {
+          res.json(result);
+        });
     })
     .post(function(req, res) {
       newThread(req)
