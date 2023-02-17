@@ -2,25 +2,27 @@ const chaiHttp = require('chai-http');
 const chai = require('chai');
 const assert = chai.assert;
 const server = require('../server');
+const mod1 = require('../modules/mod1');
 
 chai.use(chaiHttp);
 
 suite('Functional Tests', function() {
-  /* ------------------------------------------------------------ */
+  /* ------------------------------------------------------------ *
   before(function(done) {
     let arr = [
       { board: 'CDE', text: 'CDE01', delete_password: 'CDE01' },
       { board: 'CDE', text: 'CDE02', delete_password: 'CDE02' },
-      //{ board: 'CDE', text: 'CDE03', delete_password: 'CDE03' },
-      //{ board: 'CDE', text: 'CDE04', delete_password: 'CDE04' },
-      //{ board: 'CDE', text: 'CDE05', delete_password: 'CDE05' },
-      //{ board: 'CDE', text: 'CDE06', delete_password: 'CDE06' },
-      //{ board: 'CDE', text: 'CDE07', delete_password: 'CDE07' },
-      //{ board: 'CDE', text: 'CDE08', delete_password: 'CDE08' },
-      //{ board: 'CDE', text: 'CDE09', delete_password: 'CDE09' },
-      //{ board: 'CDE', text: 'CDE10', delete_password: 'CDE10' },
+      { board: 'CDE', text: 'CDE03', delete_password: 'CDE03' },
+      { board: 'CDE', text: 'CDE04', delete_password: 'CDE04' },
+      { board: 'CDE', text: 'CDE05', delete_password: 'CDE05' },
+      { board: 'CDE', text: 'CDE06', delete_password: 'CDE06' },
+      { board: 'CDE', text: 'CDE07', delete_password: 'CDE07' },
+      { board: 'CDE', text: 'CDE08', delete_password: 'CDE08' },
+      { board: 'CDE', text: 'CDE09', delete_password: 'CDE09' },
+      { board: 'CDE', text: 'CDE10', delete_password: 'CDE10' },
     ];
     for (let i = 0; i < arr.length; i++) {
+      let obj1 = { thread_id: res1.body._id, text: `reply0${j}`, delete_password: `reply0${j}` };
       chai
         .request(server)
         .post('/api/threads/CDE')
@@ -31,10 +33,10 @@ suite('Functional Tests', function() {
               chai
                 .request(server)
                 .post('/api/replies/CDE')
-                .send({ thread_id: res1.body._id, text: `reply0${j}`, delete_password: `reply0${j}` })
+                .send(opt1)
                 .end(function(err2, res2) {
                   if (!err2) {
-                    console.log(res2.body);
+                    // console.log(`Reply to ${res2.body._id} was added`);
                   } else {
                     console.log(err2);
                   }
@@ -47,7 +49,7 @@ suite('Functional Tests', function() {
     }
     done();
   });
-  /* ------------------------------------------------------------ */
+  /* ------------------------------------------------------------ *
   test('Creating a new thread', function(done) {
     let obj1 = { board: 'CDE', text: 'CDE11', delete_password: 'CDE11' };
     chai
@@ -59,6 +61,11 @@ suite('Functional Tests', function() {
         assert.equal(res.type, 'application/json');
         done();
       });
+  });
+  /* ------------------------------------------------------------ *
+  after(function(done) {
+    mod1.clearBoard();
+    done();
   });
   /* ------------------------------------------------------------ */
 });

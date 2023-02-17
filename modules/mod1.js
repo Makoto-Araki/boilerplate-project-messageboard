@@ -177,12 +177,11 @@ const chkAddrStockPairs = function(addr, name) {
 }
 */
 
-/*
 // Clear all documents in MongoDB collection
-const clearLikes = function() {
+const clearBoard = function() {
   let opt1 = {};
   return new Promise(function(resolve, reject) {
-    Likes
+    Board
       .deleteMany(opt1)
       .exec(function(err, doc) {
         if (!err) {
@@ -193,7 +192,6 @@ const clearLikes = function() {
       });
   });
 }
-*/
 
 // Exports
 exports.newThread = newThread;
@@ -202,4 +200,4 @@ exports.getThread = getThread;
 //exports.getStockLikes = getStockLikes;
 //exports.setStockLikes = setStockLikes;
 //exports.chkAddrStockPairs = chkAddrStockPairs;
-//exports.clearLikes = clearLikes;
+exports.clearBoard = clearBoard;
