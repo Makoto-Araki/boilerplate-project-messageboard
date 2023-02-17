@@ -89,12 +89,18 @@ const getThread = function(req) {
           let result = [];
           let object = {};
           for (let i = 0; i < doc.length; i++) {
+            let temp1 = doc[i].replies.length > 3 ? 3 : doc[i].replies.length;
+            let temp2 = doc[i].replies.sort((a, b) => a.created_on - b.created_on);
+            let temp3 = [];
+            for (let i = 0; i < temp1; i++) {
+              temp3.push(temp2[i]);
+            }
             object = {};
             object._id = doc[i]._id;
             object.text = doc[i].text;
             object.created_on = doc[i].created_on;
             object.bumped_on = doc[i].bumped_on;
-            object.replies = doc[i].replies;
+            object.replies = temp3;
             object.replycount = doc[i].replies.length;
             result.push(object);
           }
