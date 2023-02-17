@@ -45,7 +45,7 @@ const newThread = function(board, text, pass) {
 }
 
 // New Reply
-const newReply = function(thread_id, text, pass) {
+const newReply = function(thread, text, pass) {
   return new Promise(function(resolve, reject) {
 
     // Reply Instance
@@ -54,7 +54,7 @@ const newReply = function(thread_id, text, pass) {
     entry.delete_password = pass;
 
     // Options
-    let opt1 = { _id: thread_id };
+    let opt1 = { _id: thread };
     let opt2 = { $set: { bumped_on: Date.now() }, $push: { replies: entry } };
     let opt3 = { new: true, upsert: false };
     
@@ -90,11 +90,9 @@ const getThread = function(board) {
           let object = {};
           for (let i = 0; i < doc.length; i++) {
             let temp1 = doc[i].replies.length > 3 ? 3 : doc[i].replies.length;
-            let temp2 = doc[i].replies.sort((a, b) => a.created_on - b.created_on);
+            let temp2 = doc[i].replies.sort((a, b) => b.created_on - a.created_on);
             let temp3 = [];
-            for (let i = 0; i < temp1; i++) {
-              temp3.push(temp2[i]);
-            }
+            for (let i = 0; i < temp1; i++) temp3.push(temp2[i]);
             object = {};
             object._id = doc[i]._id;
             object.text = doc[i].text;
@@ -104,6 +102,45 @@ const getThread = function(board) {
             object.replycount = doc[i].replies.length;
             result.push(object);
           }
+          resolve(result);
+        } else {
+          reject(err);
+        }
+      });
+  });
+}
+
+// Get Reply
+const getReply = function(board, thread) {
+  return new Promise(function(resolve, reject) {
+    
+    // Options
+    let opt1 = { board: board, _id: thread };
+    let opt2 = { board: 0, delete_password: 0, reported: 0,  __v: 0 };
+    let opt3 = { bumped_on: -1 }
+    
+    Board
+      .find(opt1)
+      .select(opt2)
+      .sort(opt3)
+      .exec(function(err, doc) {
+        if (!err) {
+          let result = [];
+          let object = {};
+          //for (let i = 0; i < doc.length; i++) {
+            let temp1 = doc[i].replies.length > 3 ? 3 : doc[i].replies.length;
+            let temp2 = doc[i].replies.sort((a, b) => a.created_on - b.created_on);
+            let temp3 = [];
+            for (let i = 0; i < temp1; i++) temp3.push(temp2[i]);
+            object = {};
+            object._id = doc[i]._id;
+            object.text = doc[i].text;
+            object.created_on = doc[i].created_on;
+            object.bumped_on = doc[i].bumped_on;
+            object.replies = temp3;
+            object.replycount = doc[i].replies.length;
+            result.push(object);
+          //}
           resolve(result);
         } else {
           reject(err);
@@ -197,6 +234,7 @@ const clearBoard = function() {
 exports.newThread = newThread;
 exports.newReply = newReply;
 exports.getThread = getThread;
+exports.getReply = getReply;
 //exports.getStockLikes = getStockLikes;
 //exports.setStockLikes = setStockLikes;
 //exports.chkAddrStockPairs = chkAddrStockPairs;
