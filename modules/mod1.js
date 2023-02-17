@@ -25,14 +25,14 @@ const Reply = mongoose.model('Reply', replySchema);
 const Board = mongoose.model('Board', boardSchema);
 
 // New Thread
-const newThread = function(req) {
+const newThread = function(board, text, pass) {
   return new Promise(function(resolve, reject) {
     
     // Board Instance
     let entry = new Board();
-    entry.board = req.body.board;
-    entry.text = req.body.text;
-    entry.delete_password = req.body.delete_password;
+    entry.board = board;
+    entry.text = text;
+    entry.delete_password = pass;
     
     entry.save(function(err, doc) {
       if (!err) {
@@ -45,16 +45,16 @@ const newThread = function(req) {
 }
 
 // New Reply
-const newReply = function(req) {
+const newReply = function(thread_id, text, pass) {
   return new Promise(function(resolve, reject) {
 
     // Reply Instance
     let entry = new Reply();
-    entry.text = req.body.text;
-    entry.delete_password = req.body.delete_password;
+    entry.text = text;
+    entry.delete_password = pass;
 
     // Options
-    let opt1 = { _id: req.body.thread_id };
+    let opt1 = { _id: thread_id };
     let opt2 = { $set: { bumped_on: Date.now() }, $push: { replies: entry } };
     let opt3 = { new: true, upsert: false };
     
@@ -71,11 +71,11 @@ const newReply = function(req) {
 }
 
 // Get Thread
-const getThread = function(req) {
+const getThread = function(board) {
   return new Promise(function(resolve, reject) {
     
     // Options
-    let opt1 = { board: req.params.board };
+    let opt1 = { board: board };
     let opt2 = { board: 0, delete_password: 0, reported: 0,  __v: 0 };
     let opt3 = { bumped_on: -1 }
     

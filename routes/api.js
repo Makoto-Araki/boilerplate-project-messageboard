@@ -33,17 +33,17 @@ mongoose
 
 // New Thread
 const newThread = async function(req) {
-  return await mod1.newThread(req);
+  return await mod1.newThread(req.body.board, req.body.text, req.body.delete_password);
 }
 
 // New Reply
 const newReply = async function(req) {
-  return await mod1.newReply(req);
+  return await mod1.newReply(req.body.thread_id, req.body.text, req.body.delete_password);
 }
 
 // Get Thread
 const getThread = async function(req) {
-  return await mod1.getThread(req);
+  return await mod1.getThread(req.params.board);
 }
 
 module.exports = function (app) {
