@@ -31,19 +31,24 @@ mongoose
     console.log(error);
   });
 
-// New Thread
-const newThread = async function(req) {
-  return await mod1.newThread(req.body.board, req.body.text, req.body.delete_password);
+// Post Thread
+const postThread = async function(req) {
+  return await mod1.postThread(req.params.board, req.body.text, req.body.delete_password);
 }
 
-// New Reply
-const newReply = async function(req) {
-  return await mod1.newReply(req.body.thread_id, req.body.text, req.body.delete_password);
+// Post Reply
+const postReply = async function(req) {
+  return await mod1.postReply(req.params.board, req.body.thread_id, req.body.text, req.body.delete_password);
 }
 
 // Get Thread
 const getThread = async function(req) {
   return await mod1.getThread(req.params.board);
+}
+
+// Get Reply
+const getReply = async function(req) {
+  return await mod1.getReply(req.params.board, req.query.thread_id);
 }
 
 module.exports = function (app) {
@@ -56,9 +61,9 @@ module.exports = function (app) {
         });
     })
     .post(function(req, res) {
-      newThread(req)
+      postThread(req)
         .then(function(result) {
-          res.json(result);
+          res.send(result);
         });
     })
     .put(function(req, res) {
@@ -70,28 +75,22 @@ module.exports = function (app) {
   
   app.route('/api/replies/:board')
     .get(function(req, res) {
-      //
-    })
-    .post(function(req, res) {
-      newReply(req)
+      getReply(req)
         .then(function(result) {
           res.json(result);
+        });
+    })
+    .post(function(req, res) {
+      postReply(req)
+        .then(function(result) {
+          res.send(result);
         })
     })
     .put(function(req, res) {
-      // { board: 'AAA', thread_id: 'AAA-id', reply_id: 'AAA-01-id' }
-      console.log('PUT - /api/replies/:board');
-      console.dir(req.body);
+      //
     })
     .delete(function(req, res) {
-      /*{ 
-        board: 'AAA',
-        thread_id: 'AAA-id',
-        reply_id: 'AAA-01-id',
-        delete_password: 'AAA-pass'
-      }*/
-      console.log('DELETE - /api/replies/:board');
-      console.dir(req.body);
+      //
     });
 
 };

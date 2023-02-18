@@ -1,7 +1,7 @@
 // Import Module
 const mongoose = require('mongoose');
 
-// Schema
+// Reply Schema
 const replySchema = new mongoose.Schema({
   text:            { type: String },
   created_on:      { type: Date, default: Date.now },
@@ -9,7 +9,7 @@ const replySchema = new mongoose.Schema({
   reported:        { type: Boolean, default: false },
 });
 
-// Schema
+// Board Schema
 const boardSchema = new mongoose.Schema({
   board:           { type: String },
   text:            { type: String },
@@ -24,8 +24,8 @@ const boardSchema = new mongoose.Schema({
 const Reply = mongoose.model('Reply', replySchema);
 const Board = mongoose.model('Board', boardSchema);
 
-// New Thread
-const newThread = function(board, text, pass) {
+// Post Thread
+const postThread = function(board, text, pass) {
   return new Promise(function(resolve, reject) {
     
     // Board Instance
@@ -33,9 +33,11 @@ const newThread = function(board, text, pass) {
     entry.board = board;
     entry.text = text;
     entry.delete_password = pass;
-    
+
+    // Document is saved
     entry.save(function(err, doc) {
       if (!err) {
+        //console.log(`AAA : ${doc}`);
         resolve(doc);
       } else {
         reject(err);
@@ -44,8 +46,8 @@ const newThread = function(board, text, pass) {
   });
 }
 
-// New Reply
-const newReply = function(thread, text, pass) {
+// Post Reply
+const postReply = function(board, thread, text, pass) {
   return new Promise(function(resolve, reject) {
 
     // Reply Instance
@@ -54,14 +56,16 @@ const newReply = function(thread, text, pass) {
     entry.delete_password = pass;
 
     // Options
-    let opt1 = { _id: thread };
+    let opt1 = { board: board, _id: thread };
     let opt2 = { $set: { bumped_on: Date.now() }, $push: { replies: entry } };
     let opt3 = { new: true, upsert: false };
-    
+
+    // Document is updated
     Board
       .findOneAndUpdate(opt1, opt2, opt3)
       .exec(function(err, doc) {
         if (!err) {
+          //console.log(`BBB : ${doc}`);
           resolve(doc);
         } else {
           reject(err);
@@ -90,7 +94,7 @@ const getThread = function(board) {
           let object = {};
           for (let i = 0; i < doc.length; i++) {
             let temp1 = doc[i].replies.length > 3 ? 3 : doc[i].replies.length;
-            let temp2 = doc[i].replies.sort((a, b) => b.created_on - a.created_on);
+            let temp2 = doc[i].replies.sort((a, b) => a.created_on - b.created_on);
             let temp3 = [];
             for (let i = 0; i < temp1; i++) temp3.push(temp2[i]);
             object = {};
@@ -125,94 +129,34 @@ const getReply = function(board, thread) {
       .sort(opt3)
       .exec(function(err, doc) {
         if (!err) {
-          let result = [];
-          let object = {};
-          //for (let i = 0; i < doc.length; i++) {
-            let temp1 = doc[i].replies.length > 3 ? 3 : doc[i].replies.length;
-            let temp2 = doc[i].replies.sort((a, b) => a.created_on - b.created_on);
-            let temp3 = [];
-            for (let i = 0; i < temp1; i++) temp3.push(temp2[i]);
-            object = {};
-            object._id = doc[i]._id;
-            object.text = doc[i].text;
-            object.created_on = doc[i].created_on;
-            object.bumped_on = doc[i].bumped_on;
-            object.replies = temp3;
-            object.replycount = doc[i].replies.length;
-            result.push(object);
-          //}
-          resolve(result);
-        } else {
-          reject(err);
-        }
-      });
-  });
-}
-
-/*
-// Get Stock likes from MongoDB Collection
-const getStockLikes = function(name) {
-  let opt1 = { like: name };
-  let opt2 = { _id: 0, __v: 0 };
-  return new Promise(function(resolve, reject) {
-    Likes
-      .find(opt1)
-      .select(opt2)
-      .exec(function(err, doc) {
-        if (!err) {
-          resolve(doc.length);
-        } else {
-          reject(err);
-        }
-      });
-  });
-}
-*/
-
-/*
-// Set a combination of IP address and stock name in MongoDB collection
-const setStockLikes = function(addr, name) {
-  return new Promise(function(resolve, reject) {
-    let entry = new Likes();
-    entry.addr = bcrypt.hashSync(addr, 6);  // saltRounds(6)
-    entry.like = name;
-    entry.save(function(err, doc) {
-      if (!err) {
-        resolve(doc);
-      } else {
-        reject(err);
-      }
-    });
-  });
-}
-*/
-
-/*
-// Check if a combination of IP address and stock name exists
-const chkAddrStockPairs = function(addr, name) {
-  let flg = false;
-  let opt1 = { like: name };
-  let opt2 = { _id: 0, __v: 0 };
-  return new Promise(function(resolve, reject) {
-    Likes
-      .find(opt1)
-      .select(opt2)
-      .exec(function(err, doc) {
-        if (!err) {
-          for (let i = 0; i < doc.length; i++) {
-            if (bcrypt.compareSync(addr, doc[i].addr) === true) {
-              flg = true;
-              break;
-            }
+          //console.log(`CCC : ${doc[0]}`);
+          //console.log(`DDD : ${doc[0].replies.length}`);
+          //*
+          let temp1 = [];
+          let temp2 = {};
+          for (let i = 0; i < doc[0].replies.length; i++) {
+            temp2 = {};
+            temp2._id = doc[0].replies[i]._id;
+            temp2.text = doc[0].replies[i].text;
+            temp2.created_on = doc[0].replies[i].created_on;
+            temp1.push(temp2);
           }
-          resolve(flg);
+          let object = {};
+          object._id = doc[0]._id;
+          object.text = doc[0].text;
+          object.created_on = doc[0].created_on;
+          object.bumped_on = doc[0].bumped_on;
+          object.replies = temp1;
+          object.replycount = doc[0].replies.length;
+          resolve(object);
+          //*/
+          //resolve(doc);
         } else {
           reject(err);
         }
       });
   });
 }
-*/
 
 // Clear all documents in MongoDB collection
 const clearBoard = function() {
@@ -231,11 +175,8 @@ const clearBoard = function() {
 }
 
 // Exports
-exports.newThread = newThread;
-exports.newReply = newReply;
+exports.postThread = postThread;
+exports.postReply = postReply;
 exports.getThread = getThread;
 exports.getReply = getReply;
-//exports.getStockLikes = getStockLikes;
-//exports.setStockLikes = setStockLikes;
-//exports.chkAddrStockPairs = chkAddrStockPairs;
 exports.clearBoard = clearBoard;
