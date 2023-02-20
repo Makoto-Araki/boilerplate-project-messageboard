@@ -77,7 +77,7 @@ module.exports = function (app) {
     .delete(function(req, res) {
       deleteThread(req)
         .then(function(result) {
-          res.json(result);
+          res.send(result);
         });
     });
   

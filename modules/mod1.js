@@ -90,10 +90,10 @@ const getThread = function(board) {
           let object = {};
           for (let i = 0; i < doc.length; i++) {
             let temp1 = doc[i].replies.length > 3 ? 3 : doc[i].replies.length;
-            let temp2 = doc[i].replies.sort((a, b) => a.created_on - b.created_on);
+            let temp2 = doc[i].replies.sort((a, b) => b.created_on - a.created_on);
             let temp3 = [];
             let temp4 = {};
-            for (let i = 0; i < temp1; i++) {
+            for (let i = temp1 - 1; i >= 0; i--) {
               temp4 = {};
               temp4._id = temp2[i]._id;
               temp4.text = temp2[i].text;
@@ -147,7 +147,7 @@ const getReply = function(board, thread) {
           object.created_on = doc[0].created_on;
           object.bumped_on = doc[0].bumped_on;
           object.replies = temp1;
-          object.replycount = doc[0].replies.length;
+          //object.replycount = doc[0].replies.length;
           resolve(object);
         } else {
           reject(err);
@@ -164,38 +164,23 @@ const deleteThread = function(board, thread, pass) {
     let opt1 = { board: board, _id: thread, delete_password: pass }
 
     Board
-      .deleteOne(opt1)
-      .exec(function(err, doc) {
+      .deleteOne(opt1, function(err, res) {
         if (!err) {
-          resolve('success');
-        } else {
-          reject('incorrect password');
-        }
-      });
-    /*
-    Board
-      .find(opt1)
-      .exec(function(err1, doc1) {
-        if (!err1) {
-          console.log(`PASS : ${doc1.delete_password}`);
-          if (doc1.delete_password === pass) {
-            Board
-              .deleteOne(opt1)
-              .exec(function(err2, doc2) {
-                if (!err2) {
-                  resolve('success');
-                } else {
-                  console.log(err2);
-                }
-              });
-          } else {
-            reject('incorrect password');
+          switch(res.deletedCount) {
+            case 0:
+              resolve('incorrect password');
+              break;
+            case 1:
+              resolve('success');
+              break;
+            default:
+              resolve('incorrect password');
+              break;
           }
         } else {
-          console.log(err1);
+          reject(err);
         }
       });
-    */
   });
 }
 
