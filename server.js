@@ -1,13 +1,13 @@
 'use strict';
 require('dotenv').config();
-const express     = require('express');
-const bodyParser  = require('body-parser');
-const cors        = require('cors');
 
-const apiRoutes         = require('./routes/api.js');
-const fccTestingRoutes  = require('./routes/fcctesting.js');
-const runner            = require('./test-runner');
-
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const helmet = require('helmet');
+const apiRoutes = require('./routes/api.js');
+const fccTestingRoutes = require('./routes/fcctesting.js');
+const runner = require('./test-runner');
 const app = express();
 
 app.use('/public', express.static(process.cwd() + '/public'));
@@ -26,6 +26,19 @@ app.route('/b/:board/:threadid')
   .get(function (req, res) {
     res.sendFile(process.cwd() + '/views/thread.html');
   });
+
+// Helmet Implemented with default values
+app.use(helmet());
+
+// DNS Prefetch is forbiddened
+app.use(helmet.dnsPrefetchControl())
+
+// Self page is permitted for referer
+app.use(
+  helmet({
+    referrerPolicy: { policy: "same-origin" },
+  })
+);
 
 //Index page (static HTML)
 app.route('/')
