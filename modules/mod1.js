@@ -34,11 +34,9 @@ const postThread = function(board, text, pass) {
     entry.text = text;
     entry.delete_password = pass;
 
-    // Document is saved
     entry.save(function(err, doc) {
       if (!err) {
-        //console.log(`AAA : ${doc}`);
-        resolve(doc);
+        resolve(doc.board);
       } else {
         reject(err);
       }
@@ -60,12 +58,10 @@ const postReply = function(board, thread, text, pass) {
     let opt2 = { $set: { bumped_on: Date.now() }, $push: { replies: entry } };
     let opt3 = { new: true, upsert: false };
 
-    // Document is updated
     Board
       .findOneAndUpdate(opt1, opt2, opt3)
       .exec(function(err, doc) {
         if (!err) {
-          //console.log(`BBB : ${doc}`);
           resolve(doc);
         } else {
           reject(err);
@@ -96,7 +92,14 @@ const getThread = function(board) {
             let temp1 = doc[i].replies.length > 3 ? 3 : doc[i].replies.length;
             let temp2 = doc[i].replies.sort((a, b) => a.created_on - b.created_on);
             let temp3 = [];
-            for (let i = 0; i < temp1; i++) temp3.push(temp2[i]);
+            let temp4 = {};
+            for (let i = 0; i < temp1; i++) {
+              temp4 = {};
+              temp4._id = temp2[i]._id;
+              temp4.text = temp2[i].text;
+              temp4.created_on = temp2[i].created_on;
+              temp3.push(temp4);
+            }
             object = {};
             object._id = doc[i]._id;
             object.text = doc[i].text;
@@ -129,9 +132,6 @@ const getReply = function(board, thread) {
       .sort(opt3)
       .exec(function(err, doc) {
         if (!err) {
-          //console.log(`CCC : ${doc[0]}`);
-          //console.log(`DDD : ${doc[0].replies.length}`);
-          //*
           let temp1 = [];
           let temp2 = {};
           for (let i = 0; i < doc[0].replies.length; i++) {
@@ -149,8 +149,6 @@ const getReply = function(board, thread) {
           object.replies = temp1;
           object.replycount = doc[0].replies.length;
           resolve(object);
-          //*/
-          //resolve(doc);
         } else {
           reject(err);
         }
@@ -158,12 +156,66 @@ const getReply = function(board, thread) {
   });
 }
 
+// Delete Thread
+const deleteThread = function(board, thread, pass) {
+  return new Promise(function(resolve, reject) {
+    
+    // Options
+    let opt1 = { board: board, _id: thread, delete_password: pass }
+
+    Board
+      .deleteOne(opt1)
+      .exec(function(err, doc) {
+        if (!err) {
+          resolve('success');
+        } else {
+          reject('incorrect password');
+        }
+      });
+    /*
+    Board
+      .find(opt1)
+      .exec(function(err1, doc1) {
+        if (!err1) {
+          console.log(`PASS : ${doc1.delete_password}`);
+          if (doc1.delete_password === pass) {
+            Board
+              .deleteOne(opt1)
+              .exec(function(err2, doc2) {
+                if (!err2) {
+                  resolve('success');
+                } else {
+                  console.log(err2);
+                }
+              });
+          } else {
+            reject('incorrect password');
+          }
+        } else {
+          console.log(err1);
+        }
+      });
+    */
+  });
+}
+
+// Delete Reply
+const deleteReply = function(board, thread, reply, pass) {
+  return new Promise(function(resolve, reject) {
+    
+    // Options
+    let opt1 = { board: board, _id: thread }
+
+    //Board
+    //  .find()
+  });
+}
+
 // Clear all documents in MongoDB collection
 const clearBoard = function() {
-  let opt1 = {};
   return new Promise(function(resolve, reject) {
     Board
-      .deleteMany(opt1)
+      .deleteMany({})
       .exec(function(err, doc) {
         if (!err) {
           resolve(doc);
@@ -179,4 +231,5 @@ exports.postThread = postThread;
 exports.postReply = postReply;
 exports.getThread = getThread;
 exports.getReply = getReply;
+exports.deleteThread = deleteThread;
 exports.clearBoard = clearBoard;

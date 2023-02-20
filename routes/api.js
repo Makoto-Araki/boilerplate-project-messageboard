@@ -51,6 +51,11 @@ const getReply = async function(req) {
   return await mod1.getReply(req.params.board, req.query.thread_id);
 }
 
+// Delete Thread
+const deleteThread = async function(req) {
+  return await mod1.deleteThread(req.params.board, req.body.thread_id, req.body.delete_password);
+}
+
 module.exports = function (app) {
   
   app.route('/api/threads/:board')
@@ -63,14 +68,17 @@ module.exports = function (app) {
     .post(function(req, res) {
       postThread(req)
         .then(function(result) {
-          res.send(result);
+          res.redirect(`/b/${result}/`);
         });
     })
     .put(function(req, res) {
       // { board: 'AAA', thread_id: 'AAA-id' }
     })
     .delete(function(req, res) {
-      // { board: 'AAA', thread_id: 'AAA-id', delete_password: 'AAA-pass' }
+      deleteThread(req)
+        .then(function(result) {
+          res.json(result);
+        });
     });
   
   app.route('/api/replies/:board')
@@ -83,7 +91,7 @@ module.exports = function (app) {
     .post(function(req, res) {
       postReply(req)
         .then(function(result) {
-          res.send(result);
+          res.redirect(`/b/${result.board}/${result._id}`);
         })
     })
     .put(function(req, res) {
