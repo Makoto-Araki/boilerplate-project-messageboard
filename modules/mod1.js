@@ -186,10 +186,6 @@ const deleteThread = function(board, thread, pass) {
 // Delete Reply
 const deleteReply = function(board, thread, reply, pass) {
   return new Promise(function(resolve, reject) {
-    
-    // Options
-    //let opt1 = { board: board, _id: thread }
-
     Board
       .findById(thread, function(err1, res1) {
         if (!err1) {
@@ -209,7 +205,46 @@ const deleteReply = function(board, thread, reply, pass) {
           resolve('incorrect password');
         }
       });
+  });
+}
+
+// Put Thread
+const putThread = function(board, thread) {
+  return new Promise(function(resolve, reject) {
     
+    // Options
+    let opt1 = { board: board, _id: thread };
+    let opt2 = { $set: { reported: true } };
+    let opt3 = { new: true, upsert: false };
+
+    Board
+      .findOneAndUpdate(opt1, opt2, opt3)
+      .exec(function(err, doc) {
+        if (!err) {
+          resolve('reported');
+        } else {
+          reject(err);
+        }
+      });
+  });
+}
+
+// Put Reply
+const putReply = function(board, thread, reply) {
+  return new Promise(function(resolve, reject) {
+    Board
+      .findById(thread, function(err1, res1) {
+        if (!err1) {
+          res1.replies.id(reply).reported = true;
+          res1.save(function(err2, res2) {
+            if (!err2) {
+              resolve('reported');
+            } else {
+              reject(err2);
+            }
+          });
+        }
+      });
   });
 }
 
@@ -235,4 +270,6 @@ exports.getThread = getThread;
 exports.getReply = getReply;
 exports.deleteThread = deleteThread;
 exports.deleteReply = deleteReply;
+exports.putThread = putThread;
+exports.putReply = putReply;
 exports.clearBoard = clearBoard;
