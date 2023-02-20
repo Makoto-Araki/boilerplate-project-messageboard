@@ -147,7 +147,6 @@ const getReply = function(board, thread) {
           object.created_on = doc[0].created_on;
           object.bumped_on = doc[0].bumped_on;
           object.replies = temp1;
-          //object.replycount = doc[0].replies.length;
           resolve(object);
         } else {
           reject(err);
@@ -189,10 +188,28 @@ const deleteReply = function(board, thread, reply, pass) {
   return new Promise(function(resolve, reject) {
     
     // Options
-    let opt1 = { board: board, _id: thread }
+    //let opt1 = { board: board, _id: thread }
 
-    //Board
-    //  .find()
+    Board
+      .findById(thread, function(err1, res1) {
+        if (!err1) {
+          if (res1.replies.id(reply).delete_password === pass) {
+            res1.replies.id(reply).text = '[deleted]';
+            res1.save(function(err2, res2) {
+              if (!err2) {
+                resolve('success');
+              } else {
+                reject(err2);
+              }
+            });
+          } else {
+            resolve('incorrect password');
+          }
+        } else {
+          resolve('incorrect password');
+        }
+      });
+    
   });
 }
 
@@ -217,4 +234,5 @@ exports.postReply = postReply;
 exports.getThread = getThread;
 exports.getReply = getReply;
 exports.deleteThread = deleteThread;
+exports.deleteReply = deleteReply;
 exports.clearBoard = clearBoard;
