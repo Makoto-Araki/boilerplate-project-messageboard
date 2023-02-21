@@ -36,7 +36,7 @@ const postThread = function(board, text, pass) {
 
     entry.save(function(err, doc) {
       if (!err) {
-        resolve(doc.board);
+        resolve(doc._id);
       } else {
         reject(err);
       }
