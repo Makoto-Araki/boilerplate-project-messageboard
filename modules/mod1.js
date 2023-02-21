@@ -62,7 +62,7 @@ const postReply = function(board, thread, text, pass) {
       .findOneAndUpdate(opt1, opt2, opt3)
       .exec(function(err, doc) {
         if (!err) {
-          resolve(doc);
+          resolve(doc._id);
         } else {
           reject(err);
         }
