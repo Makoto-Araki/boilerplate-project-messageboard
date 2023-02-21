@@ -52,41 +52,43 @@ suite('Functional Tests', function() {
   });
   /* ------------------------------------------------------------ *
   test('Creating a new thread', function(done) {
-    let obj1 = { board: 'CDE', text: 'CDE11', delete_password: 'CDE11' };
-    chai
-      .request(server)
-      .post('/api/threads/CDE')
-      .send(obj1)
-      .end(function(err, res) {
-        assert.equal(res.status, 200);
-        assert.equal(res.type, 'application/json');
-        assert.equal(res.body.board, 'CDE');
-        assert.equal(res.body.text, 'CDE11');
-        assert.equal(res.body.delete_password, 'CDE11');
-        done();
-      });
+    //
   });
   /* ------------------------------------------------------------ *
   test('Viewing the 10 most recent threads with 3 replies each', function(done) {
-    chai
-      .request(server)
-      .get('/api/threads/CDE')
-      .end(function(err, res) {
-        if (!err) {
-          assert.equal(res.status, 200);
-          assert.equal(res.type, 'application/json');
-          //assert.equal(res.body[0].text)
-          //console.log(res.body);
-        } else {
-          console.log(err);
-        }
-        done();
-      });
+    //
   });
   /* ------------------------------------------------------------ *
-  after(function(done) {
-    //mod1.clearBoard();
-    done();
+  test('Deleting a thread with the incorrect password', function(done) {
+    //
+  });
+  /* ------------------------------------------------------------ *
+  test('Deleting a thread with the correct password', function(done) {
+    //
+  });
+  /* ------------------------------------------------------------ *
+  test('Reporting a thread', function(done) {
+    //
+  });
+  /* ------------------------------------------------------------ *
+  test('Creating a new reply', function(done) {
+    //
+  });
+  /* ------------------------------------------------------------ *
+  test('Viewing a single thread with all replies', function(done) {
+    //
+  });
+  /* ------------------------------------------------------------ *
+  test('Deleting a reply with the incorrect password', function(done) {
+    //
+  });
+  /* ------------------------------------------------------------ *
+  test('Deleting a reply with the correct password', function(done) {
+    //
+  });
+  /* ------------------------------------------------------------ *
+  test('Reporting a reply', function(done) {
+    //
   });
   /* ------------------------------------------------------------ */
 });
