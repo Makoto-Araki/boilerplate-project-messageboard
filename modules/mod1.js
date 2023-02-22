@@ -248,21 +248,6 @@ const putReply = function(board, thread, reply) {
   });
 }
 
-// Clear all documents in MongoDB collection
-const clearBoard = function() {
-  return new Promise(function(resolve, reject) {
-    Board
-      .deleteMany({})
-      .exec(function(err, doc) {
-        if (!err) {
-          resolve(doc);
-        } else {
-          reject(err);
-        }
-      });
-  });
-}
-
 // Exports
 exports.postThread = postThread;
 exports.postReply = postReply;
@@ -272,4 +257,3 @@ exports.deleteThread = deleteThread;
 exports.deleteReply = deleteReply;
 exports.putThread = putThread;
 exports.putReply = putReply;
-exports.clearBoard = clearBoard;

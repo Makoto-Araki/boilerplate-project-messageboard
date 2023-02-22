@@ -4,6 +4,7 @@ const assert = chai.assert;
 const server = require('../server');
 const mongoose = require('mongoose');
 const mod1 = require('../modules/mod1');
+const mod2 = require('../modules/mod2');
 
 chai.use(chaiHttp);
 
@@ -11,341 +12,189 @@ chai.use(chaiHttp);
 const Reply = mongoose.model('Reply', mod1.replySchema);
 const Board = mongoose.model('Board', mod1.boardSchema);
 
-// Test Data for 10 Functional Tests
-const database = [
-  {
-    _id: new mongoose.Types.ObjectId,
-    board: 'CDE',
-    text: 'CDE01-text',
-    delete_password: 'CDE01-pass',
-    replies: [
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply01-text',
-        delete_password: 'reply01-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply02-text',
-        delete_password: 'reply02-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply03-text',
-        delete_password: 'reply03-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply04-text',
-        delete_password: 'reply04-pass'
-      },
-    ]
-  },
-  {
-    _id: new mongoose.Types.ObjectId,
-    board: 'CDE',
-    text: 'CDE02',
-    delete_password: 'CDE02',
-    replies: [
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply01-text',
-        delete_password: 'reply01-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply02-text',
-        delete_password: 'reply02-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply03-text',
-        delete_password: 'reply03-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply04-text',
-        delete_password: 'reply04-pass'
-      },
-    ]
-  },
-  {
-    _id: new mongoose.Types.ObjectId,
-    board: 'CDE',
-    text: 'CDE03',
-    delete_password: 'CDE03',
-    replies: [
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply01-text',
-        delete_password: 'reply01-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply02-text',
-        delete_password: 'reply02-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply03-text',
-        delete_password: 'reply03-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply04-text',
-        delete_password: 'reply04-pass'
-      },
-    ]
-  },
-  {
-    _id: new mongoose.Types.ObjectId,
-    board: 'CDE',
-    text: 'CDE04',
-    delete_password: 'CDE04',
-    replies: [
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply01-text',
-        delete_password: 'reply01-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply02-text',
-        delete_password: 'reply02-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply03-text',
-        delete_password: 'reply03-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply04-text',
-        delete_password: 'reply04-pass'
-      },
-    ]
-  },
-  { 
-    _id: new mongoose.Types.ObjectId,
-    board: 'CDE',
-    text: 'CDE05',
-    delete_password: 'CDE05',
-    replies: [
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply01-text',
-        delete_password: 'reply01-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply02-text',
-        delete_password: 'reply02-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply03-text',
-        delete_password: 'reply03-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply04-text',
-        delete_password: 'reply04-pass'
-      },
-    ]
-  },
-  {
-    _id: new mongoose.Types.ObjectId,
-    board: 'CDE',
-    text: 'CDE06',
-    delete_password: 'CDE06',
-    replies: [
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply01-text',
-        delete_password: 'reply01-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply02-text',
-        delete_password: 'reply02-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply03-text',
-        delete_password: 'reply03-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply04-text',
-        delete_password: 'reply04-pass'
-      },
-    ]
-  },
-  {
-    _id: new mongoose.Types.ObjectId,
-    board: 'CDE',
-    text: 'CDE07',
-    delete_password: 'CDE07',
-    replies: [
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply01-text',
-        delete_password: 'reply01-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply02-text',
-        delete_password: 'reply02-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply03-text',
-        delete_password: 'reply03-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply04-text',
-        delete_password: 'reply04-pass'
-      },
-    ]
-  },
-  {
-    _id: new mongoose.Types.ObjectId,
-    board: 'CDE',
-    text: 'CDE08',
-    delete_password: 'CDE08',
-    replies: [
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply01-text',
-        delete_password: 'reply01-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply02-text',
-        delete_password: 'reply02-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply03-text',
-        delete_password: 'reply03-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply04-text',
-        delete_password: 'reply04-pass'
-      },
-    ]
-  },
-  {
-    _id: new mongoose.Types.ObjectId,
-    board: 'CDE',
-    text: 'CDE09',
-    delete_password: 'CDE09',
-    replies: [
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply01-text',
-        delete_password: 'reply01-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply02-text',
-        delete_password: 'reply02-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply03-text',
-        delete_password: 'reply03-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply04-text',
-        delete_password: 'reply04-pass'
-      },
-    ]
-  },
-  {
-    _id: new mongoose.Types.ObjectId,
-    board: 'CDE',
-    text: 'CDE10',
-    delete_password: 'CDE10',
-    replies: [
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply01-text',
-        delete_password: 'reply01-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply02-text',
-        delete_password: 'reply02-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply03-text',
-        delete_password: 'reply03-pass'
-      },
-      {
-        _id: new mongoose.Types.ObjectId,
-        text: 'reply04-text',
-        delete_password: 'reply04-pass'
-      },
-    ]
-  },
-];
-
-// Make Thread for 10 Functional Tests
-const makeThread = function(id, name, text, pass) {
+// Function for Making Thread
+const makeThread = function(id, board, text, pass) {
   return new Promise(function(resolve, reject) {
-    let flag = true;
+    
     let entry = new Board();
-    entry._id = database[i]._id;
-    entry.board = database[i].board;
-    entry.text = database[i].text;
-    entry.delete_password = database[i].delete_password;
+    entry._id = id;
+    entry.board = board;
+    entry.text = text;
+    entry.delete_password = pass;
+    
     entry.save(function(err, doc) {
       if (err) {
         resolve(false);
       } else {
         resolve(true);
       }
+    });
   });
 }
 
-// Make Test Data
-const makeData = async function() {
-  let result = true;
-  for (let i = 0; i < database.length; i++) {
-    result = await makeThread(
-      database[i]._id, 
-      database[i].board,
-      database[i].text,
-      database[i].pass
-    );
-  }
-  return result;
+// Function for Making Replies
+const makeReplies = function(thread, id, text, pass) {
+  return new Promise(function(resolve, reject) {
+    
+    let entry = new Reply();
+    entry._id = id;
+    entry.text = text;
+    entry.delete_password = pass;
+
+    let opt1 = { _id: thread };
+    let opt2 = { $set: { bumped_on: Date.now() }, $push: { replies: entry } };
+    let opt3 = { new: true, upsert: false };
+
+    Board
+      .findOneAndUpdate(opt1, opt2, opt3)
+      .exec(function(err, doc) {
+        if (err) {
+          resolve(false);
+        } else {
+          resolve(true);
+        }
+      });
+  });
 }
 
-let result = makeData();
+// Function for Clearing Thread
+const clearThread = function() {
+  return new Promise(function(resolve, reject) {
+    Board
+      .deleteMany({})
+      .exec(function(err, doc) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(doc);
+        }
+      });
+  });
+}
+
+// Async Function for Making Test Data
+const makeTestData = async function() {
+  for (let i = 0; i < mod2.threads.length; i++) {
+    await makeThread(
+      mod2.threads[i]._id,
+      mod2.threads[i].board,
+      mod2.threads[i].text,
+      mod2.threads[i].delete_password
+    );
+    for (let j = 0; j < mod2.threads[i].replies.length; j++) {
+      await makeReplies(
+        mod2.threads[i]._id,
+        mod2.threads[i].replies[j]._id,
+        mod2.threads[i].replies[j].text,
+        mod2.threads[i].replies[j].delete_password
+      )
+    }
+  }
+}
+
+// Async Function for Clearing Test Data
+const clearTestData = async function() {
+  await clearThread();
+}
 
 suite('Functional Tests', function() {
   this.timeout(5000);
-  /* ------------------------------------------------------------ *
+  /* ------------------------------------------------------------ */
   test('Creating a new thread', function(done) {
-    //
+    chai
+      .request(server)
+      .post('/api/threads/EFG')
+      .send({ text: 'EFG01-text', delete_password: 'EFG01-pass' })
+      .end(function(err, res) {
+        assert.equal(res.status, 200);
+        assert.equal(res.type, 'text/html');
+        done();
+      });
   });
-  /* ------------------------------------------------------------ *
+  /* ------------------------------------------------------------ */
   test('Viewing the 10 most recent threads with 3 replies each', function(done) {
-    //
+    chai
+      .request(server)
+      .get('/api/threads/CDE')
+      .end(function(err, res) {
+        assert.equal(res.status, 200);
+        assert.equal(res.type, 'application/json');
+        assert.equal(res.body[0].text, 'CDE10-text');
+        assert.equal(res.body[0].replies[0].text, 'reply02-text');
+        assert.equal(res.body[0].replies[1].text, 'reply03-text');
+        assert.equal(res.body[0].replies[2].text, 'reply04-text');
+        assert.equal(res.body[0].replycount, 4);
+        assert.equal(res.body[1].text, 'CDE09-text');
+        assert.equal(res.body[1].replies[0].text, 'reply02-text');
+        assert.equal(res.body[1].replies[1].text, 'reply03-text');
+        assert.equal(res.body[1].replies[2].text, 'reply04-text');
+        assert.equal(res.body[1].replycount, 4);
+        assert.equal(res.body[2].text, 'CDE08-text');
+        assert.equal(res.body[2].replies[0].text, 'reply02-text');
+        assert.equal(res.body[2].replies[1].text, 'reply03-text');
+        assert.equal(res.body[2].replies[2].text, 'reply04-text');
+        assert.equal(res.body[2].replycount, 4);
+        assert.equal(res.body[3].text, 'CDE07-text');
+        assert.equal(res.body[3].replies[0].text, 'reply02-text');
+        assert.equal(res.body[3].replies[1].text, 'reply03-text');
+        assert.equal(res.body[3].replies[2].text, 'reply04-text');
+        assert.equal(res.body[3].replycount, 4);
+        assert.equal(res.body[4].text, 'CDE06-text');
+        assert.equal(res.body[4].replies[0].text, 'reply02-text');
+        assert.equal(res.body[4].replies[1].text, 'reply03-text');
+        assert.equal(res.body[4].replies[2].text, 'reply04-text');
+        assert.equal(res.body[4].replycount, 4);
+        assert.equal(res.body[5].text, 'CDE05-text');
+        assert.equal(res.body[5].replies[0].text, 'reply02-text');
+        assert.equal(res.body[5].replies[1].text, 'reply03-text');
+        assert.equal(res.body[5].replies[2].text, 'reply04-text');
+        assert.equal(res.body[5].replycount, 4);
+        assert.equal(res.body[6].text, 'CDE04-text');
+        assert.equal(res.body[6].replies[0].text, 'reply02-text');
+        assert.equal(res.body[6].replies[1].text, 'reply03-text');
+        assert.equal(res.body[6].replies[2].text, 'reply04-text');
+        assert.equal(res.body[6].replycount, 4);
+        assert.equal(res.body[7].text, 'CDE03-text');
+        assert.equal(res.body[7].replies[0].text, 'reply02-text');
+        assert.equal(res.body[7].replies[1].text, 'reply03-text');
+        assert.equal(res.body[7].replies[2].text, 'reply04-text');
+        assert.equal(res.body[7].replycount, 4);
+        assert.equal(res.body[8].text, 'CDE02-text');
+        assert.equal(res.body[8].replies[0].text, 'reply02-text');
+        assert.equal(res.body[8].replies[1].text, 'reply03-text');
+        assert.equal(res.body[8].replies[2].text, 'reply04-text');
+        assert.equal(res.body[8].replycount, 4);
+        assert.equal(res.body[9].text, 'CDE01-text');
+        assert.equal(res.body[9].replies[0].text, 'reply02-text');
+        assert.equal(res.body[9].replies[1].text, 'reply03-text');
+        assert.equal(res.body[9].replies[2].text, 'reply04-text');
+        assert.equal(res.body[9].replycount, 4);
+        done();
+      });
   });
-  /* ------------------------------------------------------------ *
+  /* ------------------------------------------------------------ */
   test('Deleting a thread with the incorrect password', function(done) {
-    //
+    chai
+      .request(server)
+      .delete('/api/threads/CDE')
+      .send({ thread_id: mod2.threads[0]._id, delete_password: 'CDE01-abcd' })
+      .end(function(err, res) {
+        assert.equal(res.status, 200);
+        assert.equal(res.text, 'incorrect password');
+        done();
+      });
   });
-  /* ------------------------------------------------------------ *
+  /* ------------------------------------------------------------ */
   test('Deleting a thread with the correct password', function(done) {
-    //
+    chai
+      .request(server)
+      .delete('/api/threads/CDE')
+      .send({ thread_id: mod2.threads[0]._id, delete_password: 'CDE01-pass' })
+      .end(function(err, res) {
+        assert.equal(res.status, 200);
+        assert.equal(res.text, 'success');
+        done();
+      });
   });
   /* ------------------------------------------------------------ *
   test('Reporting a thread', function(done) {
@@ -370,6 +219,12 @@ suite('Functional Tests', function() {
   /* ------------------------------------------------------------ *
   test('Reporting a reply', function(done) {
     //
+  });
+  /* ------------------------------------------------------------ */
+  after(function(done) {
+    clearTestData();
+    makeTestData();
+    done();
   });
   /* ------------------------------------------------------------ */
 });
