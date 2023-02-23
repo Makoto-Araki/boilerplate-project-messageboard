@@ -110,8 +110,29 @@ const getThreadId = function(board, text) {
 }
 
 // Async Function called before Functional Tests
-const BefFunc = async function(board, text) {
+const BefFunc1 = async function(board, text) {
   let result = await getThreadId(board, text);
+  return result;
+}
+
+// Get Reply-IDs
+const getReplyIds = function(board, text) {
+  return new Promise(function(resolve, reject) {
+    Board
+      .find({ $and: [ { board: board }, { text: text } ] })
+      .exec(function(err, doc) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(doc[0].replies);
+        }
+      });
+  });
+}
+
+// Async Function called before Functional Tests
+const BefFunc2 = async function(board, text) {
+  let result = await getReplyIds(board, text);
   return result;
 }
 
@@ -120,24 +141,34 @@ suite('Functional Tests', function() {
   let thread02;
   let thread03;
   let thread04;
+  let thread05;
+  let replyArr;
   this.timeout(5000);
   /* ------------------------------------------------------------ */
   before(function(done) {
-    BefFunc('CDE', 'CDE01-text')
+    BefFunc1('CDE', 'CDE01-text')
       .then(function(result) {
         thread01 = result;
       });
-    BefFunc('CDE', 'CDE02-text')
+    BefFunc1('CDE', 'CDE02-text')
       .then(function(result) {
         thread02 = result;
       });
-    BefFunc('CDE', 'CDE03-text')
+    BefFunc1('CDE', 'CDE03-text')
       .then(function(result) {
         thread03 = result;
       });
-    BefFunc('CDE', 'CDE04-text')
+    BefFunc1('CDE', 'CDE04-text')
       .then(function(result) {
         thread04 = result;
+      });
+    BefFunc1('CDE', 'CDE05-text')
+      .then(function(result) {
+        thread05 = result;
+      });
+    BefFunc2('CDE', 'CDE05-text')
+      .then(function(result) {
+        replyArr = result;
       });
     done();
   });
@@ -254,7 +285,7 @@ suite('Functional Tests', function() {
   test('Creating a new reply', function(done) {
     chai
       .request(server)
-      .post('/api/threads/CDE')
+      .post('/api/replies/CDE')
       .send({ thread_id: thread03, text: 'reply05-text', delete_password: 'reply05-pass' })
       .end(function(err, res) {
         assert.equal(res.status, 200);
@@ -279,13 +310,29 @@ suite('Functional Tests', function() {
         done();
       });
   });
-  /* ------------------------------------------------------------ *
+  /* ------------------------------------------------------------ */
   test('Deleting a reply with the incorrect password', function(done) {
-    //
+    chai
+      .request(server)
+      .delete('/api/replies/CDE')
+      .send({ thread_id: thread05, reply_id: replyArr[3], delete_password: 'reply04-abcd' })
+      .end(function(err, res) {
+        assert.equal(res.status, 200);
+        assert.equal(res.text, 'incorrect password');
+        done();
+      });
   });
-  /* ------------------------------------------------------------ *
+  /* ------------------------------------------------------------ */
   test('Deleting a reply with the correct password', function(done) {
-    //
+    chai
+      .request(server)
+      .delete('/api/replies/CDE')
+      .send({ thread_id: thread05, reply_id: replyArr[3], delete_password: 'reply04-pass' })
+      .end(function(err, res) {
+        assert.equal(res.status, 200);
+        assert.equal(res.text, 'success');
+        done();
+      });
   });
   /* ------------------------------------------------------------ *
   test('Reporting a reply', function(done) {
