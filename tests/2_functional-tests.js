@@ -118,6 +118,8 @@ const BefFunc = async function(board, text) {
 suite('Functional Tests', function() {
   let thread01;
   let thread02;
+  let thread03;
+  let thread04;
   this.timeout(5000);
   /* ------------------------------------------------------------ */
   before(function(done) {
@@ -128,6 +130,14 @@ suite('Functional Tests', function() {
     BefFunc('CDE', 'CDE02-text')
       .then(function(result) {
         thread02 = result;
+      });
+    BefFunc('CDE', 'CDE03-text')
+      .then(function(result) {
+        thread03 = result;
+      });
+    BefFunc('CDE', 'CDE04-text')
+      .then(function(result) {
+        thread04 = result;
       });
     done();
   });
@@ -228,17 +238,46 @@ suite('Functional Tests', function() {
         done();
       });
   });
-  /* ------------------------------------------------------------ *
+  /* ------------------------------------------------------------ */
   test('Reporting a thread', function(done) {
-    //
+    chai
+      .request(server)
+      .put('/api/threads/CDE')
+      .send({ thread_id: thread02 })
+      .end(function(err, res) {
+        assert.equal(res.status, 200);
+        assert.equal(res.text, 'reported');
+        done();
+      });
   });
-  /* ------------------------------------------------------------ *
+  /* ------------------------------------------------------------ */
   test('Creating a new reply', function(done) {
-    //
+    chai
+      .request(server)
+      .post('/api/threads/CDE')
+      .send({ thread_id: thread03, text: 'reply05-text', delete_password: 'reply05-pass' })
+      .end(function(err, res) {
+        assert.equal(res.status, 200);
+        assert.equal(res.type, 'text/html');
+        done();
+      });
   });
-  /* ------------------------------------------------------------ *
+  /* ------------------------------------------------------------ */
   test('Viewing a single thread with all replies', function(done) {
-    //
+    chai
+      .request(server)
+      .get('/api/replies/CDE')
+      .query({ thread_id: thread04.toString() })
+      .end(function(err, res) {
+        assert.equal(res.status, 200);
+        assert.equal(res.type, 'application/json');
+        assert.equal(res.body.text, 'CDE04-text');
+        assert.equal(res.body.replies[0].text, 'reply01-text');
+        assert.equal(res.body.replies[1].text, 'reply02-text');
+        assert.equal(res.body.replies[2].text, 'reply03-text');
+        assert.equal(res.body.replies[3].text, 'reply04-text');
+        done();
+      });
   });
   /* ------------------------------------------------------------ *
   test('Deleting a reply with the incorrect password', function(done) {
