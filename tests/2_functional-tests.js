@@ -96,12 +96,13 @@ const makeTestData = async function() {
 
 suite('Functional Tests', function() {
   this.timeout(5000);
-  /* ------------------------------------------------------------ */
+  /* ------------------------------------------------------------ *
   before(function(done) {
-    MakeTestData()
+    makeTestData()
       .then(function(result) {
         console.log(result);
       });
+    done();
   });
   /* ------------------------------------------------------------ *
   test('Creating a new thread', function(done) {
@@ -224,10 +225,12 @@ suite('Functional Tests', function() {
   test('Reporting a reply', function(done) {
     //
   });
-  /* ------------------------------------------------------------ *
+  /* ------------------------------------------------------------ */
   after(function(done) {
-    clearTestData();
-    makeTestData();
+    makeTestData()
+      .then(function(result) {
+        console.log(result);
+      });
     done();
   });
   /* ------------------------------------------------------------ */
