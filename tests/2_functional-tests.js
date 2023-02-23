@@ -315,7 +315,7 @@ suite('Functional Tests', function() {
     chai
       .request(server)
       .delete('/api/replies/CDE')
-      .send({ thread_id: thread05, reply_id: replyArr[3], delete_password: 'reply04-abcd' })
+      .send({ thread_id: thread05, reply_id: replyArr[2], delete_password: 'reply03-abcd' })
       .end(function(err, res) {
         assert.equal(res.status, 200);
         assert.equal(res.text, 'incorrect password');
@@ -327,16 +327,24 @@ suite('Functional Tests', function() {
     chai
       .request(server)
       .delete('/api/replies/CDE')
-      .send({ thread_id: thread05, reply_id: replyArr[3], delete_password: 'reply04-pass' })
+      .send({ thread_id: thread05, reply_id: replyArr[2], delete_password: 'reply03-pass' })
       .end(function(err, res) {
         assert.equal(res.status, 200);
         assert.equal(res.text, 'success');
         done();
       });
   });
-  /* ------------------------------------------------------------ *
+  /* ------------------------------------------------------------ */
   test('Reporting a reply', function(done) {
-    //
+    chai
+      .request(server)
+      .put('/api/replies/CDE')
+      .send({ thread_id: thread05, reply_id: replyArr[3] })
+      .end(function(err, res) {
+        assert.equal(res.status, 200);
+        assert.equal(res.text, 'reported');
+        done();
+      });
   });
   /* ------------------------------------------------------------ */
   after(function(done) {
