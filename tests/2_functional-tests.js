@@ -74,6 +74,7 @@ const clearThread = function() {
 
 // Async Function for Making Test Data
 const makeTestData = async function() {
+  await clearThread();
   for (let i = 0; i < mod2.threads.length; i++) {
     await makeThread(
       mod2.threads[i]._id,
@@ -90,15 +91,18 @@ const makeTestData = async function() {
       )
     }
   }
-}
-
-// Async Function for Clearing Test Data
-const clearTestData = async function() {
-  await clearThread();
+  return 'Test Data was made';
 }
 
 suite('Functional Tests', function() {
   this.timeout(5000);
+  /* ------------------------------------------------------------ */
+  before(function(done) {
+    MakeTestData()
+      .then(function(result) {
+        console.log(result);
+      });
+  });
   /* ------------------------------------------------------------ *
   test('Creating a new thread', function(done) {
     chai
@@ -111,7 +115,7 @@ suite('Functional Tests', function() {
         done();
       });
   });
-  /* ------------------------------------------------------------ *
+  /* ------------------------------------------------------------ */
   test('Viewing the 10 most recent threads with 3 replies each', function(done) {
     chai
       .request(server)
