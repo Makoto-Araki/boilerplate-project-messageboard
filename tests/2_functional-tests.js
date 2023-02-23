@@ -97,8 +97,6 @@ const makeTestData = async function() {
 // Get Thread-ID
 const getThreadId = function(board, text) {
   return new Promise(function(resolve, reject) {
-    console.log(board);
-    console.log(text);
     Board
       .find({ $and: [ { board: board }, { text: text } ] })
       .exec(function(err, doc) {
