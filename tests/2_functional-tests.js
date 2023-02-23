@@ -91,20 +91,49 @@ const makeTestData = async function() {
       )
     }
   }
-  return 'Test Data was made';
+  return 'Test Data was initialized';
+}
+
+// Get Thread-ID
+const getThreadId = function(board, text) {
+  return new Promise(function(resolve, reject) {
+    console.log(board);
+    console.log(text);
+    Board
+      .find({ $and: [ { board: board }, { text: text } ] })
+      .exec(function(err, doc) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(doc[0]._id);
+        }
+      });
+  });
+}
+
+// Async Function called before Functional Tests
+const BefFunc = async function(board, text) {
+  let result = await getThreadId(board, text);
+  return result;
 }
 
 suite('Functional Tests', function() {
+  let thread01;
+  let thread02;
   this.timeout(5000);
-  /* ------------------------------------------------------------ *
+  /* ------------------------------------------------------------ */
   before(function(done) {
-    makeTestData()
+    BefFunc('CDE', 'CDE01-text')
       .then(function(result) {
-        console.log(result);
+        thread01 = result;
+      });
+    BefFunc('CDE', 'CDE02-text')
+      .then(function(result) {
+        thread02 = result;
       });
     done();
   });
-  /* ------------------------------------------------------------ *
+  /* ------------------------------------------------------------ */
   test('Creating a new thread', function(done) {
     chai
       .request(server)
@@ -177,24 +206,24 @@ suite('Functional Tests', function() {
         done();
       });
   });
-  /* ------------------------------------------------------------ *
+  /* ------------------------------------------------------------ */
   test('Deleting a thread with the incorrect password', function(done) {
     chai
       .request(server)
       .delete('/api/threads/CDE')
-      .send({ thread_id: mod2.threads[0]._id, delete_password: 'CDE01-abcd' })
+      .send({ thread_id: thread01, delete_password: 'CDE01-abcd' })
       .end(function(err, res) {
         assert.equal(res.status, 200);
         assert.equal(res.text, 'incorrect password');
         done();
       });
   });
-  /* ------------------------------------------------------------ *
+  /* ------------------------------------------------------------ */
   test('Deleting a thread with the correct password', function(done) {
     chai
       .request(server)
       .delete('/api/threads/CDE')
-      .send({ thread_id: mod2.threads[0]._id, delete_password: 'CDE01-pass' })
+      .send({ thread_id: thread01, delete_password: 'CDE01-pass' })
       .end(function(err, res) {
         assert.equal(res.status, 200);
         assert.equal(res.text, 'success');
