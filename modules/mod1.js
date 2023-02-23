@@ -159,11 +159,16 @@ const getReply = function(board, thread) {
 const deleteThread = function(board, thread, pass) {
   return new Promise(function(resolve, reject) {
     
+    // NOTE!
+    // I changed from Boards.deleteOne(filter) to Boards.remove(filter).
+    // Because Boards.deleteOne(filter) deleted documents randomly when
+    // there were no documents matching the filter.
+    
     // Options
-    let opt1 = { board: board, _id: thread, delete_password: pass }
+    let opt1 = { $and: [ { board: board }, { _id: thread }, { delete_password: pass } ] };
 
     Board
-      .deleteOne(opt1, function(err, res) {
+      .remove(opt1, function(err, res) {
         if (!err) {
           switch(res.deletedCount) {
             case 0:

@@ -99,7 +99,7 @@ const clearTestData = async function() {
 
 suite('Functional Tests', function() {
   this.timeout(5000);
-  /* ------------------------------------------------------------ */
+  /* ------------------------------------------------------------ *
   test('Creating a new thread', function(done) {
     chai
       .request(server)
@@ -111,7 +111,7 @@ suite('Functional Tests', function() {
         done();
       });
   });
-  /* ------------------------------------------------------------ */
+  /* ------------------------------------------------------------ *
   test('Viewing the 10 most recent threads with 3 replies each', function(done) {
     chai
       .request(server)
@@ -172,7 +172,7 @@ suite('Functional Tests', function() {
         done();
       });
   });
-  /* ------------------------------------------------------------ */
+  /* ------------------------------------------------------------ *
   test('Deleting a thread with the incorrect password', function(done) {
     chai
       .request(server)
@@ -184,7 +184,7 @@ suite('Functional Tests', function() {
         done();
       });
   });
-  /* ------------------------------------------------------------ */
+  /* ------------------------------------------------------------ *
   test('Deleting a thread with the correct password', function(done) {
     chai
       .request(server)
@@ -220,7 +220,7 @@ suite('Functional Tests', function() {
   test('Reporting a reply', function(done) {
     //
   });
-  /* ------------------------------------------------------------ */
+  /* ------------------------------------------------------------ *
   after(function(done) {
     clearTestData();
     makeTestData();
